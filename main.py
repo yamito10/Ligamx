@@ -40,8 +40,20 @@ def get_news():
             if next_sibling:
                 summary = next_sibling.strip()[:200]  # Limita el resumen a 200 caracteres
 
-            # Imagen (no encontrada en el HTML, usamos placeholder)
-            image = "https://placehold.co/600x400/cccccc/000000?text=No+Image"
+            # Intenta encontrar la imagen real
+image_tag = link_tag.find_previous('img') # Busca la etiqueta <img> más cercana antes del enlace
+if not image_tag:
+    # Si no la encuentra, busca dentro del elemento "padre" del enlace
+    image_tag = link_tag.find_parent().find('img')
+
+if image_tag and image_tag.get('src'):
+    image = image_tag['src']
+    # A veces las URLs de las imágenes son relativas, hay que completarlas
+    if not image.startswith('http'):
+        image = "https://www.record.com.mx" + image
+else:
+    # Si no encuentra ninguna imagen, usa el placeholder
+    image = "https://placehold.co/600x400/e2e8f0/4a5568?text=Imagen+no+disponible"
 
             # Extrae la categoría (por ejemplo, 'América', 'Cruz Azul')
             category = "Desconocida"
